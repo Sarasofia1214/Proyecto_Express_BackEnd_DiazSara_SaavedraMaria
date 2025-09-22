@@ -53,7 +53,7 @@ class AuthController {
         return res.status(401).json({ message: "Credenciales inválidas" });
       }
 
-// Generador de token
+// generar token
       const token = jwt.sign(
         { id: user._id, rol: user.rol },
         process.env.JWT_SECRET,
