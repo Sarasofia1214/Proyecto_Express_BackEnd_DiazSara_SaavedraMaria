@@ -699,7 +699,7 @@ Se utilizaron herramientas de diagramación para representar el modelo lógico y
 
 Si tienes preguntas, sugerencias o encuentras algún problema con la implementación, no dudes en contactarme a través de:
 
-- GitHub: [Sarasofia1214](https://github.com/Sarasofia1214) o [Maria Juliana Saavedra Mejia](Maria-Juliana-Saavedra-Mejia)
+- GitHub: [Sarasofia1214](https://github.com/Sarasofia1214) o [Maria Juliana Saavedra Mejia](https://github.com/Maria-Juliana-Saavedra-Mejia)
 - Puedes abrir un [Issue aquí](https://github.com/Sarasofia1214/Proyecto_Express_BackEnd_DiazSara_SaavedraMaria/issues)
 
 
