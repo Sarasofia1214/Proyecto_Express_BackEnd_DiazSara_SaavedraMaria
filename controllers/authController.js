@@ -1,35 +1,32 @@
-import UserModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import UserModel from "../models/UserModel.js";
 
-class AuthController {
+const userModel = new UserModel();
+
+export default class AuthController {
   static async register(req, res) {
     try {
       const { usuario, password, rol } = req.body;
       if (!usuario || !password || !rol) {
-        return res.status(400).json({ message: "Faltan campos" });
+        return res.status(400).json({ message: "Faltan credenciales" });
       }
 
-      const userModel = new UserModel();
-      const collection = await userModel.connect();
-
-      const existingUser = await collection.findOne({ usuario });
+      const existingUser = await userModel.findByUsuario(usuario);
       if (existingUser) {
-        return res.status(400).json({ message: "El usuario ya existe" });
+        return res.status(400).json({ message: "Usuario ya existe" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      await collection.insertOne({
+      const newUser = await userModel.create({
         usuario,
         password: hashedPassword,
         rol,
       });
 
-      res.status(201).json({ message: "Usuario registrado exitosamente" });
-    } catch (e) {
-      console.e("Error en register:", e);
-      res.status(500).json({ message: "Error al registrar usuario" });
+      res.status(201).json({ message: "Usuario registrado exitosamente", usuario: newUser.usuario });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 
@@ -40,32 +37,29 @@ class AuthController {
         return res.status(400).json({ message: "Faltan credenciales" });
       }
 
-      const userModel = new UserModel();
-      const collection = await userModel.connect();
-
-      const user = await collection.findOne({ usuario });
+      const user = await userModel.findByUsuario(usuario);
       if (!user) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
+        return res.status(401).json({ message: "Usuario no encontrado" });
       }
 
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: "Credenciales inválidas" });
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        return res.status(401).json({ message: "Contraseña incorrecta" });
       }
 
-// generar token
+      // Token con id y rol
       const token = jwt.sign(
         { id: user._id, rol: user.rol },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
 
-      res.json({ message: "Login exitoso", token });
-    } catch (e) {
-      console.error("Error en login:", e);
-      res.status(500).json({ message: "Error al iniciar sesión" });
+      res.json({
+        message: "¡Acceso concedido!",
+        token,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   }
 }
-
-export default AuthController;

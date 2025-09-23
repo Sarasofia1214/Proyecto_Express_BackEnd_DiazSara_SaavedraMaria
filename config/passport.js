@@ -1,26 +1,26 @@
-// src/config/passport.js
-import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { getDB } from "../config/db.js";
-import { ObjectId } from "mongodb";
-import dotenv from "dotenv";
-dotenv.config();
+import passport from "passport";
+import UserModel from "../models/UserModel.js";
 
 const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // "Authorization: Bearer <token>"
+  secretOrKey: process.env.JWT_SECRET,
 };
 
+// Estrategia JWT
 passport.use(
-  new JwtStrategy(opts, async (payload, done) => {
+  new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
-      const db = getDB();
-      const user = await db.collection("users").findOne({ _id: new ObjectId(payload.id) });
-      if (!user) return done(null, false);
-      delete user.password;
-      return done(null, user);
-    } catch (e) {
-      return done(e, false);
+      const userModel = new UserModel();
+      const user = await userModel.findById(jwt_payload.id);
+
+      if (user) {
+        return done(null, user); // Usuario encontrado → req.user
+      } else {
+        return done(null, false); // Usuario no existe
+      }
+    } catch (err) {
+      return done(err, false);
     }
   })
 );

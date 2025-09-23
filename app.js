@@ -1,49 +1,27 @@
-// server.js (esquema)
 import express from "express";
 import dotenv from "dotenv";
+import passport from "./config/passport.js";
+import authRoutes from "./routes/authRoutes.js";
+
 dotenv.config();
 
-import { connectDB } from "./config/db.js";
-import passport from "passport";
-import passportConfig from "./config/passport.js"; 
-import categoriasRoutes from "./routes/categoriasRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import testRoutes from "./routes/testRoute.js";
-import cors from "cors";
-
-
 const app = express();
-app.use(cors());
 app.use(express.json());
 
-
+// Inicializar Passport
 app.use(passport.initialize());
-passportConfig;
 
-app.use("/api/test", testRoutes);
-
-app.use("/api/categorias", categoriasRoutes);
-
+// Rutas
 app.use("/api/auth", authRoutes);
 
-
-app.get("/", (req, res) => res.send("KarenFlix API"));
-
-const PORT = process.env.PORT;
-
-const start = async () => {
-  try {
-    await connectDB(); 
-    app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
-  } catch (err) {
-    console.error("No se pudo iniciar:", err.message);
+// Ruta protegida de prueba
+app.get(
+  "/api/protegida",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({ message: "Accediste a una ruta protegida", usuario: req.user });
   }
-};
+);
 
-app.use("/api/auth", authRoutes);
-
-app.listen(process.env.PORT, () => {
-  console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
-});
-
-start();
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
