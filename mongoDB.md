@@ -595,6 +595,8 @@ erDiagram
     RESEÑAS ||--o{ REACCIONES : "recibe"
     PELICULAS ||--o{ RANKINGS : "aparece en"
     PELICULAS ||--o{ POPULARIDAD : "tiene"
+    POPULARIDAD ||--o{ REACCIONES : "se califica"
+
 ```
 
 <br>

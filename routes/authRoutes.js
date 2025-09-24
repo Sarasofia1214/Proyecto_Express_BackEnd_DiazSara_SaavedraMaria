@@ -5,7 +5,7 @@ import AuthController from "../controllers/authController.js";
 
 const router = Router();
 
-// Validadores
+// Validadores con express-validator
 const validarRegistro = [
   body("usuario")
     .isString().withMessage("El usuario debe ser texto")
@@ -16,10 +16,9 @@ const validarRegistro = [
     .matches(/[A-Z]/).withMessage("La contraseña debe contener al menos una letra mayúscula")
     .matches(/\d/).withMessage("La contraseña debe contener al menos un número")
     .matches(/[@$!%*?&]/).withMessage("La contraseña debe contener al menos un carácter especial (@$!%*?&)"),
-  body("rol")
-    .isIn([1, 2]).withMessage("El rol debe ser 1 (admin) o 2 (usuario)"),
 ];
 
+// Validación de login
 const validarLogin = [
   body("usuario").notEmpty().withMessage("El usuario es obligatorio"),
   body("password").notEmpty().withMessage("La contraseña es obligatoria"),

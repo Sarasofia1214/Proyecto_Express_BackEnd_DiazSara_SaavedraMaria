@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
+import peliculasRoutes from "./routes/peliculasRoutes.js"; 
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(passport.initialize());
 
 // Rutas
 app.use("/api/auth", authRoutes);
+app.use("/api/peliculas", peliculasRoutes); 
 
 // Ruta protegida de prueba
 app.get(
@@ -24,4 +26,5 @@ app.get(
 );
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
+app.listen(Number(PORT), () => console.log(`Servidor en http://localhost:${PORT}`));
+

@@ -7,13 +7,14 @@ export default class UserModel {
     this.client = new MongoClient(process.env.MONGO_URI);
     this.dbName = process.env.DB_NAME;
   }
-
-  async connect() {
-    if (!this.client.topology?.isConnected()) {
-      await this.client.connect();
-    }
-    return this.client.db(this.dbName).collection("usuarios");
+async connect() {
+  if (!this.client._connectionPromise) {
+    this.client._connectionPromise = this.client.connect();
   }
+  await this.client._connectionPromise;
+
+  return this.client.db(this.dbName).collection("usuarios");
+}
 
   async create(user) {
     const col = await this.connect();

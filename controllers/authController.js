@@ -7,24 +7,31 @@ const userModel = new UserModel();
 export default class AuthController {
   static async register(req, res) {
     try {
-      const { usuario, password, rol } = req.body;
-      if (!usuario || !password || !rol) {
+      const { usuario, password } = req.body; 
+      if (!usuario || !password) {
         return res.status(400).json({ message: "Faltan credenciales" });
       }
 
+// Verificacion para ver si existe el user
       const existingUser = await userModel.findByUsuario(usuario);
       if (existingUser) {
-        return res.status(400).json({ message: "Usuario ya existe" });
+        return res.status(400).json({ message: "Usuario ya existente" });
       }
 
+// Hashear contraseña
       const hashedPassword = await bcrypt.hash(password, 10);
+
+// Siempre registrar con rol 2, que viene siendo usuario
       const newUser = await userModel.create({
         usuario,
         password: hashedPassword,
-        rol,
+        rol: 2,
       });
 
-      res.status(201).json({ message: "Usuario registrado exitosamente", usuario: newUser.usuario });
+      res.status(201).json({
+        message: "Usuario registrado exitosamente",
+        usuario: newUser.usuario,
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -47,7 +54,7 @@ export default class AuthController {
         return res.status(401).json({ message: "Contraseña incorrecta" });
       }
 
-      // Token con id y rol
+// Generar token con rol incluido
       const token = jwt.sign(
         { id: user._id, rol: user.rol },
         process.env.JWT_SECRET,
@@ -55,7 +62,8 @@ export default class AuthController {
       );
 
       res.json({
-        message: "¡Acceso concedido!",
+        message: "Acceso concedido",
+        usuario: { id: user._id, rol: user.rol },
         token,
       });
     } catch (err) {
