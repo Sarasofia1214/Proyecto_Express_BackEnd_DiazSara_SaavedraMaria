@@ -1,93 +1,57 @@
-import { getDB } from "../config/db.js";
 import { ObjectId } from "mongodb";
+import { getDB } from "../config/db.js";
 
-// Usuario sugiere película (queda "pendiente")
-export const sugerirPelicula = async (req, res) => {
-  try {
-    const db = getDB();
-    const { titulo, descripcion, director, anio } = req.body;
-
-    const nuevaPelicula = {
-      titulo,
-      descripcion,
-      director,
-      año,
-      estado: "pendiente",
-      creadaPor: req.user.id, // usuario autenticado
-      createdAt: new Date()
-    };
-
-    await db.collection("peliculas").insertOne(nuevaPelicula);
-    res.status(201).json({ message: "Película sugerida. Espera aprobación del administrador." });
-  } catch (error) {
-    res.status(500).json({ error: "Error al sugerir película" });
+export default class PeliculasModel {
+  constructor() {
+    this.collection = "peliculas";
   }
-};
 
-// Admin crea película directamente aprobada
-export const crearPelicula = async (req, res) => {
-  try {
+  async findAll() {
     const db = getDB();
-    const { titulo, descripcion, director, anio } = req.body;
-
-    const nuevaPelicula = {
-      titulo,
-      descripcion,
-      director,
-      anio,
-      estado: "aprobada",
-      creadaPor: req.user.id,
-      createdAt: new Date()
-    };
-
-    await db.collection("peliculas").insertOne(nuevaPelicula);
-    res.status(201).json(nuevaPelicula);
-  } catch (error) {
-    res.status(500).json({ error: "Error al crear película" });
+    return await db.collection(this.collection).find().toArray();
   }
-};
 
-// Admin aprueba sugerencia
-export const aprobarPelicula = async (req, res) => {
-  try {
+  async findById(id) {
     const db = getDB();
-    const { id } = req.params;
+    return await db.collection(this.collection).findOne({ _id: new ObjectId(id) });
+  }
 
-    const result = await db.collection("peliculas").findOneAndUpdate(
+async findByTitulo(titulo) {
+  const db = getDB();
+  const tituloNormalizado = titulo.trim().toLowerCase();
+  return await db.collection(this.collection).findOne({ titulo: tituloNormalizado });
+}
+
+
+
+  async create(pelicula) {
+    const db = getDB();
+// Normalizamos el título antes de guardar para que ignore espacios y mayusculas
+    const peliculaNormalizada = {
+      ...pelicula,
+      titulo: pelicula.titulo.trim().toLowerCase(),
+    };
+    const result = await db.collection(this.collection).insertOne(peliculaNormalizada);
+    return { ...peliculaNormalizada, _id: result.insertedId };
+  }
+
+  async update(id, data) {
+    const db = getDB();
+    const dataNormalizada = {
+      ...data,
+      titulo: data.titulo.trim().toLowerCase(),
+    };
+    const result = await db.collection(this.collection).findOneAndUpdate(
       { _id: new ObjectId(id) },
-      { $set: { estado: "aprobada" } },
+      { $set: dataNormalizada },
       { returnDocument: "after" }
     );
-
-    if (!result.value) return res.status(404).json({ error: "Película no encontrada" });
-    res.json(result.value);
-  } catch (error) {
-    res.status(500).json({ error: "Error al aprobar película" });
+    return result.value;
   }
-};
 
-// Listar todas aprobadas
-export const listarPeliculas = async (req, res) => {
-  try {
+  async delete(id) {
     const db = getDB();
-    const peliculas = await db.collection("peliculas").find({ estado: "aprobada" }).toArray();
-    res.json(peliculas);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener películas" });
+    const result = await db.collection(this.collection).deleteOne({ _id: new ObjectId(id) });
+    return result.deletedCount > 0;
   }
-};
-
-// Admin elimina película
-export const eliminarPelicula = async (req, res) => {
-  try {
-    const db = getDB();
-    const { id } = req.params;
-
-    const result = await db.collection("peliculas").deleteOne({ _id: new ObjectId(id) });
-    if (result.deletedCount === 0) return res.status(404).json({ error: "Película no encontrada" });
-
-    res.json({ message: "Película eliminada" });
-  } catch (error) {
-    res.status(500).json({ error: "Error al eliminar película" });
-  }
-};
+}

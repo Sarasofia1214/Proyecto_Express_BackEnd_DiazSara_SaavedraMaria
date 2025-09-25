@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: API de Películas
+  version: "1.0"
+  description: |
+    API para la gestión de películas y series.
+    - Solo **administradores** pueden crear, actualizar o eliminar.
+    - Los usuarios pueden consultar películas libremente.
+servers:
+  - url: http://38.242.206.120:3000//api
+    description: Servidor local
+
+tags:
+  - name: Películas
+    description: Operaciones relacionadas con películas
+
+paths:
+  /peliculas:
+    get:
+      summary: Obtener todas las películas
+      tags: [Películas]
+      responses:
+        "200":
+          description: Lista de películas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pelicula"
+
+    post:
+      summary: Crear una nueva película (solo administradores)
+      tags: [Películas]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PeliculaInput"
+      responses:
+        "201":
+          description: Película creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pelicula"
+        "400":
+          description: Error en los datos o título duplicado
+        "401":
+          description: No autorizado
+        "403":
+          description: Acceso solo para administradores
+
+  /peliculas/{id}:
+    get:
+      summary: Obtener una película por ID
+      tags: [Películas]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de la película
+      responses:
+        "200":
+          description: Película encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pelicula"
+        "404":
+          description: Película no encontrada
+
+    put:
+      summary: Actualizar una película (solo administradores)
+      tags: [Películas]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de la película
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PeliculaInput"
+      responses:
+        "200":
+          description: Película actualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pelicula"
+        "401":
+          description: No autorizado
+        "403":
+          description: Acceso solo para administradores
+        "404":
+          description: Película no encontrada
+
+    delete:
+      summary: Eliminar una película (solo administradores)
+      tags: [Películas]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de la película
+      responses:
+        "200":
+          description: Película eliminada correctamente
+        "401":
+          description: No autorizado
+        "403":
+          description: Acceso solo para administradores
+        "404":
+          description: Película no encontrada
+
+components:
+  schemas:
+    Pelicula:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 650c0a35a1f23c6b8e5f1234
+        titulo:
+          type: string
+          example: Matrix
+        descripcion:
+          type: string
+          example: Un hacker descubre la verdad detrás de la realidad.
+        año:
+          type: integer
+          example: 1999
+        imagen:
+          type: string
+          example: "https://miapi.com/img/matrix.jpg"
+        id_categoria:
+          type: string
+          example: 650c0a35a1f23c6b8e5f5678
+
+    PeliculaInput:
+      type: object
+      required:
+        - titulo
+        - descripcion
+        - año
+        - id_categoria
+      properties:
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        año:
+          type: integer
+        imagen:
+          type: string
+        id_categoria:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

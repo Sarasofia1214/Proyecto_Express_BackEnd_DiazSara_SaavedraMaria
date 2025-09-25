@@ -2,7 +2,7 @@ import express from "express";
 import passport from "passport";
 import { body, validationResult } from "express-validator";
 import * as CatCtrl from "../controllers/categoriasController.js";
-import { isAdmin } from "../middlewares/roles.js";
+import { siEsAdmin } from "../middlewares/roles.js";
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get("/:id", limiter, CatCtrl.getCategoria);
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
-  isAdmin,
+  siEsAdmin,
   body("nombre").isString().notEmpty().trim().escape(),
   async (req, res) => {
     const errors = validationResult(req);
@@ -33,7 +33,7 @@ router.post(
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  isAdmin,
+  siEsAdmin,
   body("nombre").isString().notEmpty().trim().escape(),
   async (req, res) => {
     const errors = validationResult(req);
@@ -46,7 +46,7 @@ router.put(
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  isAdmin,
+  siEsAdmin,
   CatCtrl.deleteCategoria
 );
 

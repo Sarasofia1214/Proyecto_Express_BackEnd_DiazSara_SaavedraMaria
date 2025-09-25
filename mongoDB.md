@@ -568,7 +568,7 @@ erDiagram
         objectId id_reseña
         string like
         string dislike
-        date fecha
+    
     }
 
     RANKINGS {
@@ -581,10 +581,8 @@ erDiagram
     POPULARIDAD {
         objectId _id
         objectId id_pelicula
-        int likes
-        int dislikes
-        int num_comentarios
-        date fecha
+        int id_likes
+        int id_dislikes
     }
 
     %% Relaciones

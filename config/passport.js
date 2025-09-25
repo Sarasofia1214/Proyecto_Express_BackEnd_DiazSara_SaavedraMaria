@@ -3,11 +3,10 @@ import passport from "passport";
 import UserModel from "../models/UserModel.js";
 
 const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // "Authorization: Bearer <token>"
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), 
   secretOrKey: process.env.JWT_SECRET,
 };
 
-// Estrategia JWT
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
@@ -15,9 +14,9 @@ passport.use(
       const user = await userModel.findById(jwt_payload.id);
 
       if (user) {
-        return done(null, user); // Usuario encontrado → req.user
+        return done(null, user); 
       } else {
-        return done(null, false); // Usuario no existe
+        return done(null, false); 
       }
     } catch (err) {
       return done(err, false);
