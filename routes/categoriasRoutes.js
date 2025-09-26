@@ -1,53 +1,63 @@
-import express from "express";
-import passport from "passport";
+import { Router } from "express";
 import { body, validationResult } from "express-validator";
-import * as CatCtrl from "../controllers/categoriasController.js";
+import CategoriasController from "../controllers/categoriasController.js";
 import { siEsAdmin } from "../middlewares/roles.js";
+import passport from "passport";
+import CategoriaModel from "../models/categoriasModel.js";
 
-const router = express.Router();
+const router = Router();
+const categoriaModel = new CategoriaModel();
 
-// Rate limiter
-import rateLimit from "express-rate-limit";
-const limiter = rateLimit({ windowMs: 60 * 1000, max: 60 }); 
 
-//Obtener todas
-router.get("/", limiter, CatCtrl.getCategorias);
+const validarCategoria = [
+  body("nombre")
+    .notEmpty().withMessage("El nombre es obligatorio")
+    .custom(async (value) => {
+      const existente = await categoriaModel.findByNombre(value);
+      if (existente) {
+        throw new Error("Ya existe una categoría con este nombre");
+      }
+      return true;
+    }),
+  body("descripcion").notEmpty().withMessage("La descripción es obligatoria"),
+];
 
-// GET por id
-router.get("/:id", limiter, CatCtrl.getCategoria);
 
-// POST crear (admin)
+const manejarErrores = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
+
+
+router.get("/", CategoriasController.getAll);
+router.get("/:id", CategoriasController.getById);
+
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   siEsAdmin,
-  body("nombre").isString().notEmpty().trim().escape(),
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    return CatCtrl.createCategoria(req, res);
-  }
+  validarCategoria,
+  manejarErrores,
+  CategoriasController.create
 );
 
-// PUT actualizar (admin)
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   siEsAdmin,
-  body("nombre").isString().notEmpty().trim().escape(),
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    return CatCtrl.updateCategoria(req, res);
-  }
+  validarCategoria,
+  manejarErrores,
+  CategoriasController.update
 );
 
-// DELETE (admin)
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   siEsAdmin,
-  CatCtrl.deleteCategoria
+  CategoriasController.delete
 );
 
 export default router;

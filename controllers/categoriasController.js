@@ -1,53 +1,53 @@
-import * as CategoriaRep from "../repositories/categoriasRepository.js";
+import CategoriaModel from "../models/categoriasModel.js";
+const categoriaModel = new CategoriaModel();
 
-export const getCategorias = async (req, res) => {
-  try {
-    const items = await CategoriaRep.findAll();
-    res.json(items);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+export default class CategoriasController {
+  static async create(req, res) {
+    try {
+      const id = await categoriaModel.create(req.body);
+      res.status(201).json({ message: "Categoría creada", id });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error creando la categoría" });
+    }
   }
-};
 
-export const getCategoria = async (req, res) => {
-  try {
-    const cat = await CategoriaRep.findById(req.params.id);
-    if (!cat) return res.status(404).json({ error: "Categoría no encontrada" });
-    res.json(cat);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  static async update(req, res) {
+    try {
+      const categoria = await categoriaModel.update(req.params.id, req.body);
+      if (!categoria) return res.status(404).json({ error: "Categoría no encontrada" });
+      res.json({ message: "Categoría actualizada", categoria });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error actualizando la categoría" });
+    }
   }
-};
 
-export const createCategoria = async (req, res) => {
-  try {
-    const { nombre } = req.body;
-    const exists = await CategoriaRep.findByName(nombre);
-    if (exists) return res.status(400).json({ error: "La categoría ya existe" });
-    const result = await CategoriaRep.create({ nombre });
-    res.status(201).json({ insertedId: result.insertedId });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-};
+ static async getAll(req, res) {
+  console.log("Llegó petición a getAll");
+  res.json({ message: "Prueba de ruta categorias funcionando" });
+}
 
-export const updateCategoria = async (req, res) => {
-  try {
-    const { nombre } = req.body;
-    const id = req.params.id;
-// Se validar duplicados por nombre
-    await CategoriaRep.update(id, { nombre });
-    res.json({ message: "Categoría actualizada" });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-};
 
-export const deleteCategoria = async (req, res) => {
-  try {
-    await CategoriaRep.remove(req.params.id);
-    res.json({ message: "Categoría eliminada" });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  static async getById(req, res) {
+    try {
+      const categoria = await categoriaModel.findById(req.params.id);
+      if (!categoria) return res.status(404).json({ error: "Categoría no encontrada" });
+      res.json(categoria);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error obteniendo la categoría" });
+    }
   }
-};
+
+  static async delete(req, res) {
+    try {
+      const eliminado = await categoriaModel.delete(req.params.id);
+      if (!eliminado) return res.status(404).json({ error: "Categoría no encontrada" });
+      res.json({ message: "Categoría eliminada" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error eliminando la categoría" });
+    }
+  }
+}

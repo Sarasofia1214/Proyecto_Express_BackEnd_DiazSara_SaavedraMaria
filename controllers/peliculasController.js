@@ -36,7 +36,7 @@ export default class PeliculasController {
     }
   }
 
-// Obterner por Id
+// Obterner por id
   static async getById(req, res) {
     try {
       const pelicula = await peliculaModel.findById(req.params.id);
