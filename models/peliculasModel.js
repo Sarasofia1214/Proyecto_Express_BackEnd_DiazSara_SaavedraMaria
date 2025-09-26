@@ -17,12 +17,9 @@ export default class PeliculasModel {
   }
 
 async findByTitulo(titulo) {
-  const db = getDB();
-  const tituloNormalizado = titulo.trim().toLowerCase();
-  return await db.collection(this.collection).findOne({ titulo: tituloNormalizado });
+  const col = await this.connect();
+  return await col.findOne({ titulo });
 }
-
-
 
   async create(pelicula) {
     const db = getDB();

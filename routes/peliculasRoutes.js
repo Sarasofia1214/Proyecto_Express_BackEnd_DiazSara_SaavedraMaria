@@ -1,37 +1,28 @@
+// routes/peliculasRoutes.js
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
 import PeliculasController from "../controllers/peliculasController.js";
 import { siEsAdmin } from "../middlewares/roles.js";
-import PeliculaModel from "../models/peliculasModel.js";
+import passport from "passport";
+import PeliculasModel from "../models/peliculasModel.js";
 
 const router = Router();
-const peliculaModel = new PeliculaModel();
+const peliculasModel = new PeliculasModel();
 
-// Valdaion con express-validator
-const validarPelicula = (isUpdate = false) => [
+// Validación de creación/actualización
+const validarPelicula = [
   body("titulo")
     .notEmpty().withMessage("El título es obligatorio")
-    .isString().withMessage("El título debe ser texto")
-    .custom(async (value, { req }) => {
-      const tituloNormalizado = value.trim().toLowerCase();
-      const existe = await peliculaModel.findByTitulo(tituloNormalizado);
-      if (existe) {
-// Si existe ignoramos la misma película
-        if (!isUpdate || existe._id.toString() !== req.params.id.toString()) {
-          throw new Error("Ya existe una película con este título");
-        }
+    .custom(async (value) => {
+      const existente = await peliculasModel.findByTitulo(value);
+      if (existente) {
+        throw new Error("Ya existe una película con este título");
       }
       return true;
     }),
-
-
-  body("descripcion")
-    .notEmpty().withMessage("La descripción es obligatoria")
-    .isString().withMessage("Debe ser texto"),
-  body("año")
-    .isInt({ min: 1888 }).withMessage("El año debe ser un número válido"),
+  body("descripcion").notEmpty().withMessage("La descripción es obligatoria"),
+  body("año").isInt({ min: 1888 }).withMessage("Año no válido"), // 1888 = primera película
 ];
-
 
 // Middleware para manejar errores de validación
 const manejarErrores = (req, res, next) => {
@@ -42,9 +33,14 @@ const manejarErrores = (req, res, next) => {
   next();
 };
 
-router.post("/", siEsAdmin, validarPelicula(), manejarErrores, PeliculasController.create);
-router.put("/:id", siEsAdmin, validarPelicula(true), manejarErrores, PeliculasController.update);
-router.get("/", PeliculasController.getAll);
-router.get("/:id", PeliculasController.getById);
+// Rutas protegidas para admin
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  siEsAdmin,
+  validarPelicula,
+  manejarErrores,
+  PeliculasController.create
+);
 
 export default router;

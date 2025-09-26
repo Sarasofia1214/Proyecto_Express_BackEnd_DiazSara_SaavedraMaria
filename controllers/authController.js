@@ -18,7 +18,7 @@ export default class AuthController {
         return res.status(400).json({ message: "Usuario ya existente" });
       }
 
-// Hashear contraseña
+// Hasheado de contraseña
       const hashedPassword = await bcrypt.hash(password, 10);
 
 // Siempre registrar con rol 2, que viene siendo usuario
@@ -54,11 +54,10 @@ export default class AuthController {
         return res.status(401).json({ message: "Contraseña incorrecta" });
       }
 
-// Generar token con rol incluido
       const token = jwt.sign(
         { id: user._id, rol: user.rol },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "100h" }
       );
 
       res.json({

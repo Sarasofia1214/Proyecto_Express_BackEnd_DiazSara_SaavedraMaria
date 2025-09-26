@@ -1,37 +1,81 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
-  title: API de Películas
-  version: "1.0"
-  description: |
-    API para la gestión de películas y series.
-    - Solo **administradores** pueden crear, actualizar o eliminar.
-    - Los usuarios pueden consultar películas libremente.
-servers:
-  - url: http://38.242.206.120:3000//api
-    description: Servidor local
+  title: Karenflix API
+  version: 1.0.0
+  description: API para gestionar usuarios y películas en Karenflix.
 
-tags:
-  - name: Películas
-    description: Operaciones relacionadas con películas
+servers:
+  - url: http://38.242.206.120:3000
 
 paths:
-  /peliculas:
+  /api/auth/register:
+    post:
+      summary: Registrar un nuevo usuario
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - usuario
+                - password
+              properties:
+                usuario:
+                  type: string
+                  example: "sara123"
+                password:
+                  type: string
+                  example: "Password123!"
+      responses:
+        "201":
+          description: Usuario registrado exitosamente
+        "400":
+          description: Error de validación o usuario existente
+        "500":
+          description: Error interno del servidor
+
+  /api/auth/login:
+    post:
+      summary: Iniciar sesión
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - usuario
+                - password
+              properties:
+                usuario:
+                  type: string
+                  example: "sara123"
+                password:
+                  type: string
+                  example: "Password123!"
+      responses:
+        "200":
+          description: Login exitoso, devuelve token JWT
+        "401":
+          description: Credenciales inválidas
+        "500":
+          description: Error interno del servidor
+
+  /api/peliculas:
     get:
       summary: Obtener todas las películas
-      tags: [Películas]
+      tags: [Peliculas]
       responses:
         "200":
           description: Lista de películas
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Pelicula"
-
+        "500":
+          description: Error interno del servidor
     post:
-      summary: Crear una nueva película (solo administradores)
-      tags: [Películas]
+      summary: Crear una nueva película (solo Admin)
+      tags: [Peliculas]
       security:
         - bearerAuth: []
       requestBody:
@@ -39,139 +83,123 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PeliculaInput"
+              type: object
+              required:
+                - titulo
+                - descripcion
+                - year
+              properties:
+                titulo:
+                  type: string
+                  example: "Inception"
+                descripcion:
+                  type: string
+                  example: "Un ladrón que roba secretos corporativos..."
+                year:
+                  type: integer
+                  example: 2010
+                imagen:
+                  type: string
+                  example: "https://miapi.com/img/inception.jpg"
+                id_categoria:
+                  type: string
+                  example: "68d02844bda0ffb89e717da2"
       responses:
         "201":
-          description: Película creada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pelicula"
+          description: Película creada exitosamente
         "400":
-          description: Error en los datos o título duplicado
+          description: Error de validación
         "401":
           description: No autorizado
-        "403":
-          description: Acceso solo para administradores
+        "500":
+          description: Error interno del servidor
 
-  /peliculas/{id}:
+  /api/peliculas/{id}:
     get:
       summary: Obtener una película por ID
-      tags: [Películas]
+      tags: [Peliculas]
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: string
-          description: ID de la película
+          example: "68d49ba619c614a43e730c7c"
       responses:
         "200":
-          description: Película encontrada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pelicula"
+          description: Detalle de la película
         "404":
           description: Película no encontrada
-
+        "500":
+          description: Error interno del servidor
     put:
-      summary: Actualizar una película (solo administradores)
-      tags: [Películas]
+      summary: Actualizar una película por ID (solo Admin)
+      tags: [Peliculas]
       security:
         - bearerAuth: []
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: string
-          description: ID de la película
+          example: "68d49ba619c614a43e730c7c"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PeliculaInput"
+              type: object
+              properties:
+                titulo:
+                  type: string
+                  example: "Matrix Reloaded"
+                descripcion:
+                  type: string
+                  example: "Neo regresa a luchar contra las máquinas."
+                year:
+                  type: integer
+                  example: 2003
+                imagen:
+                  type: string
+                  example: "https://miapi.com/img/matrix2.jpg"
+                id_categoria:
+                  type: string
+                  example: "650c0a35a1f23c6b8e5f5678"
       responses:
         "200":
-          description: Película actualizada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pelicula"
+          description: Película actualizada exitosamente
+        "400":
+          description: Error de validación
         "401":
           description: No autorizado
-        "403":
-          description: Acceso solo para administradores
         "404":
           description: Película no encontrada
-
+        "500":
+          description: Error interno del servidor
     delete:
-      summary: Eliminar una película (solo administradores)
-      tags: [Películas]
+      summary: Eliminar una película por ID (solo Admin)
+      tags: [Peliculas]
       security:
         - bearerAuth: []
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: string
-          description: ID de la película
+          example: "68d49ba619c614a43e730c7c"
       responses:
         "200":
-          description: Película eliminada correctamente
+          description: Película eliminada exitosamente
         "401":
           description: No autorizado
-        "403":
-          description: Acceso solo para administradores
         "404":
           description: Película no encontrada
+        "500":
+          description: Error interno del servidor
 
 components:
-  schemas:
-    Pelicula:
-      type: object
-      properties:
-        _id:
-          type: string
-          example: 650c0a35a1f23c6b8e5f1234
-        titulo:
-          type: string
-          example: Matrix
-        descripcion:
-          type: string
-          example: Un hacker descubre la verdad detrás de la realidad.
-        año:
-          type: integer
-          example: 1999
-        imagen:
-          type: string
-          example: "https://miapi.com/img/matrix.jpg"
-        id_categoria:
-          type: string
-          example: 650c0a35a1f23c6b8e5f5678
-
-    PeliculaInput:
-      type: object
-      required:
-        - titulo
-        - descripcion
-        - año
-        - id_categoria
-      properties:
-        titulo:
-          type: string
-        descripcion:
-          type: string
-        año:
-          type: integer
-        imagen:
-          type: string
-        id_categoria:
-          type: string
-
   securitySchemes:
     bearerAuth:
       type: http

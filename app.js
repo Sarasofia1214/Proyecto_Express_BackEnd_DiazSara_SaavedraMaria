@@ -3,28 +3,32 @@ import dotenv from "dotenv";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
 import peliculasRoutes from "./routes/peliculasRoutes.js"; 
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
 dotenv.config();
-
 const app = express();
-app.use(express.json());
 
-// Inicializar Passport
+app.use(express.json());
 app.use(passport.initialize());
+
+// Configuración mínima de CORS
+app.use(cors({
+  origin: "*",
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
+}));
+
+// Swagger
+const swaggerDocument = YAML.load("./swagger/karenfli.yaml"); 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rutas
 app.use("/api/auth", authRoutes);
-app.use("/api/peliculas", peliculasRoutes); 
-
-// Ruta protegida de prueba
-app.get(
-  "/api/protegida",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json({ message: "Accediste a una ruta protegida", usuario: req.user });
-  }
-);
+app.use("/api/peliculas", peliculasRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(Number(PORT), () => console.log(`Servidor en http://localhost:${PORT}`));
-
+app.listen(Number(PORT), "0.0.0.0", () => {
+  console.log(`Servidor en http://0.0.0.0:${PORT}`);
+});
