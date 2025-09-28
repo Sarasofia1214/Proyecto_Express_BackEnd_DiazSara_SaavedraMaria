@@ -40,6 +40,8 @@ export class resena{
     async update(id,req){
         const db = await connect()
         const upData = {
+            id_usuario: new ObjectId(req.id_usuario),
+            id_pelicula: new ObjectId(req.id_pelicula),
             comentario: req.comentario,
             calificacion: req.calificacion,
             date: new Date()
@@ -50,7 +52,7 @@ export class resena{
     }
     async delete(id){
         const db = await connect()
-        const result = await db.collection('RESENAS').deleteOne({_id:id})
+        const result = await db.collection('RESENAS').deleteOne({_id:new ObjectId(id)})
         await disconnect()
         return result
     }

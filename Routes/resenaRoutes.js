@@ -38,7 +38,7 @@ routerResena.get('/listbymovie/:id',async (req,res,next)=>{
 
 routerResena.post("/edit/:id",getCurrentUser,async (req, res, next) => {
     try {
-        const result = await resena.updateResena(req.params.id,req)
+        const result = await resena.updateResena(req.params.id,req.body)
         return res.status(200).json([{message: "reseña editada con exito"},result])
     } catch (error) {
         next(error)
