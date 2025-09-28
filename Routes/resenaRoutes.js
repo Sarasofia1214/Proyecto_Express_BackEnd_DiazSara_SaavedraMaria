@@ -29,7 +29,7 @@ routerResena.get("/list",getCurrentUser,async (req, res, next) => {
 
 routerResena.get('/listbymovie/:id',async (req,res,next)=>{
     try {
-        const result = resena.getResenaByMovie(req.params.id)
+        const result = await resena.getResenaByMovie(req.params.id)
         return res.status(200).json(result)
     } catch (error) {
         next(error)
@@ -38,7 +38,7 @@ routerResena.get('/listbymovie/:id',async (req,res,next)=>{
 
 routerResena.post("/edit/:id",getCurrentUser,async (req, res, next) => {
     try {
-        const result = resena.updateResena(req.params.id,req)
+        const result = await resena.updateResena(req.params.id,req)
         return res.status(200).json([{message: "reseña editada con exito"},result])
     } catch (error) {
         next(error)
@@ -47,7 +47,7 @@ routerResena.post("/edit/:id",getCurrentUser,async (req, res, next) => {
 
 routerResena.delete("/delete/:id",getCurrentUser,async (req, res, next) => {
     try {
-        const result = resena.deleteResena(req.params.id)
+        const result = await resena.deleteResena(req.params.id)
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: "Usuario no encontrado" });
           }
