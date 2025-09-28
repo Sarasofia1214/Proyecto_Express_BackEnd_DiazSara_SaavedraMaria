@@ -1,50 +1,42 @@
-import express from "express";
-import dotenv from "dotenv";
-import passport from "./config/passport.js";
-import authRoutes from "./routes/authRoutes.js";
-import peliculasRoutes from "./routes/peliculasRoutes.js"; 
-import categoriasRoutes from "./routes/categoriasRoutes.js";
+import passport from "passport"
 import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import YAML from "yamljs";
-import { connectDB } from "./config/db.js";
+import express from "express"
+import dotenv from "dotenv"
+import routerAuth from "./auth/routes.js"
+import routerUser from "./Routes/userRoutes.js"
+import routerMovie from "./Routes/peliculaRoutes.js"
+import routerResena from "./Routes/resenaRoutes.js"
+import routerReaccion from "./Routes/reaccionRoutes.js"
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './swagger-output.json' with { type: 'json' };
 
-dotenv.config();
+dotenv.config()
 const app = express();
-
+const PORT = process.env.PORT
 app.use(express.json());
 app.use(passport.initialize());
 
 app.use(cors({
-  origin: "*",
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
-}));
+    origin: [
+      "http://38.242.206.120",          // tu host donde ves Swagger
+      "http://38.242.206.120/docs",     // si usas swagger-ui en /docs
+      "http://localhost:3000"         // si lo abres local
+    ],
+    methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+    allowedHeaders: ["Content-Type","Authorization"],
+    credentials: false
+  }));
 
-const swaggerDocument = YAML.load("./swagger/karenfli.yaml"); 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-
-await connectDB(); 
-const startServer = async () => {
-  await connectDB();
-
-  app.use("/api/auth", authRoutes);
-  app.use("/api/peliculas", peliculasRoutes);
-  app.use("/api/categorias", categoriasRoutes);
-
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Servidor en http://38.242.206.120:${PORT}`);
-  });
-};
-
-startServer().catch(err => {
-  console.error("Error arrancando el servidor:", err);
-});
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
+app.use('/auth',routerAuth)
+app.use('/movies',routerMovie)
+app.use('/users',routerUser)
+app.use('/resenas',routerResena)
+app.use('./reacciones',routerReaccion)
 
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor en http://38.242.206.120:${PORT}`);
-});
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
+

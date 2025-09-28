@@ -1,34 +1,36 @@
-import { MongoClient, ObjectId } from "mongodb";
-import dotenv from "dotenv";
-dotenv.config();
+import {connect, disconnect} from '../utils/database.js'
+import { ObjectId } from 'mongodb';
 
-export default class UserModel {
-  constructor() {
-    this.client = new MongoClient(process.env.MONGO_URI);
-    this.dbName = process.env.DB_NAME;
-  }
-async connect() {
-  if (!this.client._connectionPromise) {
-    this.client._connectionPromise = this.client.connect();
-  }
-  await this.client._connectionPromise;
-
-  return this.client.db(this.dbName).collection("usuarios");
-}
-
-  async create(user) {
-    const col = await this.connect();
-    const result = await col.insertOne(user);
-    return { ...user, _id: result.insertedId };
-  }
-
-  async findByUsuario(usuario) {
-    const col = await this.connect();
-    return await col.findOne({ usuario });
-  }
-
-  async findById(id) {
-    const col = await this.connect();
-    return await col.findOne({ _id: new ObjectId(id) }, { projection: { password: 0 } });
-  }
+export class modelUser{
+    constructor(usuario, contrasena){
+        this.usuario = usuario;
+        this.contrasena = contrasena;
+        this.admin = this.admin
+    }
+    async findUserByUsuario(id){
+        const db = await connect();
+        const result = await db.collection('USUARIOS').find({_id:new ObjectId(id)}).toArray();
+        console.log(result)
+        await disconnect()
+        return result;
+    }
+    async updateUser(id,usuario,contrasena){
+        const db = await connect();
+        const result = await db.collection('USUARIOS').updateOne({_id:new ObjectId(id)},{$set:{usuario:usuario,contrasena:contrasena}});
+        await disconnect()
+        return result;
+    }
+    async deleteUser(id){
+        const db = await connect();
+        const result = await db.collection('USUARIOS').deleteOne({_id:new ObjectId(id)})
+        await disconnect()
+        return result
+    }
+    async getAllusers(){
+        const db = await connect();
+        const result = await db.collection('USUARIOS').find().toArray();
+        console.log(result)
+        await disconnect()
+        return result
+    }
 }
