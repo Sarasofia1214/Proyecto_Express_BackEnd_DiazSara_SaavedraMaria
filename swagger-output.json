@@ -6,8 +6,8 @@
     "description": "API para autenticación, gestión de películas, usuarios, reseñas y reacciones."
   },
   "servers": [
-    { "url": "http://38.242.206.120" }
-  ],
+    { "url": "http://62.169.28.169" }
+      ],
   "tags": [
     { "name": "Health", "description": "Estado del servicio" },
     { "name": "Auth", "description": "Autenticación y emisión de tokens" },

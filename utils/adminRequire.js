@@ -8,5 +8,6 @@ export const requireAdmin = [
       return res.status(403).json({ error: "❌ No tienes permisos de administrador" });
     }
     next();
+    
   },
 ];

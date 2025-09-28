@@ -18,9 +18,11 @@ app.use(passport.initialize());
 
 app.use(cors({
     origin: [
-      "http://38.242.206.120",          // tu host donde ves Swagger
-      "http://38.242.206.120/docs",     // si usas swagger-ui en /docs
-      "http://localhost:3000"         // si lo abres local
+      "http://62.169.28.169",          // tu host donde ves Swagger
+      "http://62.169.28.169/docs",     // si usas swagger-ui en /docs
+      "http://localhost:3000" ,      // si lo abres local
+      "http://127.0.0.1:5500",     // tu Live Server (frontend)
+      "http://localhost:5500"      // otra variante posible
     ],
     methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
     allowedHeaders: ["Content-Type","Authorization"],
@@ -36,6 +38,10 @@ app.use('./reacciones',routerReaccion)
 
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Servidor corriendo en http://0.0.0.0:${PORT}`);
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
