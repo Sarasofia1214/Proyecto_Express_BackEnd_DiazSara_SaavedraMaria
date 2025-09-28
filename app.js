@@ -34,7 +34,7 @@ app.use('/auth',routerAuth)
 app.use('/movies',routerMovie)
 app.use('/users',routerUser)
 app.use('/resenas',routerResena)
-app.use('./reacciones',routerReaccion)
+app.use('/reacciones',routerReaccion)
 
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
@@ -43,6 +43,5 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 
