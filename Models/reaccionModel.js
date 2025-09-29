@@ -1,4 +1,5 @@
-import { connect,disconnect } from "../utils/database.js";
+import { db } from "../utils/database.js";
+import { ObjectId } from "mongodb";
 
 export class reaccion{
     constructor(id_usuario,id_resena,like,dislike){
@@ -11,12 +12,12 @@ export class reaccion{
     async create(req){
         const db = await connect()
         const newReaccion = {
-            id_usuario: req.id_usuario,
-            id_resena: req.id_resena,
+            id_usuario: new ObjectId(req.id_usuario),
+            id_resena: new ObjectId(req.id_resena),
             like: req.like,
             dislike: req.dislike
         }
-        const result = db.collection('REACCIONES').insertOne(newReaccion)
+        const result = await db.collection('REACCIONES').insertOne(newReaccion)
         await disconnect()
         return result
     }
@@ -28,22 +29,23 @@ export class reaccion{
         return result
     }
 
+
     async update(id,req){
         const db = await connect()
         const upData = {
-            id_usuario: req.id_usuario,
-            id_resena: req.id_resena,
+            id_usuario: new ObjectId(req.id_usuario),
+            id_resena: new ObjectId(req.id_resena),
             like: req.like,
             dislike: req.dislike
         }
-        const result = await db.collection('REACCIONES').updateOne({_id:id},{$set:upData})
+        const result = await db.collection('REACCIONES').updateOne({_id:new ObjectId(id)},{$set:upData})
         await disconnect()
         return result
     }
 
     async delete(id){
         const db = await connect()
-        const result = await db.collection('REACCIONES').deleteOne({_id:id})
+        const result = await db.collection('REACCIONES').deleteOne({_id:new ObjectId(id)})
         await disconnect()
         return result
     }

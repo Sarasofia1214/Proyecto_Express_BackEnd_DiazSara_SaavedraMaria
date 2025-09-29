@@ -59,4 +59,13 @@ routerMovie.get('/pel-pop',async (req,res,next)=>{
     }
 })
 
+routerMovie.get('/search/:id', async (req,res,next)=>{
+    try {
+        const result = await pel.searchPel(req.params.id)
+        return res.status(200).json(result)
+    } catch (error) {
+        next(error)
+    }
+})
+
 export default routerMovie;

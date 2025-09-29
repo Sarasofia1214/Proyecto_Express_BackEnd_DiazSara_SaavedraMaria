@@ -1,4 +1,4 @@
-import { connect, disconnect } from "../utils/database.js";
+import { db } from "../utils/database.js";
 import { Int32, Double,ObjectId } from "mongodb";
 
 export class pelicula{
@@ -13,7 +13,6 @@ export class pelicula{
     }
 
     async createMovie(data){
-        const db = await connect()
         const newMovie = {
             title: String(data.title ?? "").trim(),
             summary: String(data.summary ?? "").trim(),
@@ -27,22 +26,16 @@ export class pelicula{
               : String(data.genres ?? "").trim()
         }
         const result = await db.collection('PELICULAS').insertOne(newMovie)
-        await disconnect()
         return result
     }
 
     async getAllMovies(req, res){
-        const db = await connect()
         const result = await db.collection('PELICULAS').find().toArray()
-        console.log(result)
-        await disconnect()
         return result
     }
 
     async getMovieByGenre(genre,res){
-        const db = await connect()
         const result = await db.collection('PELICULAS').find({genres:genre}).toArray()
-        await disconnect()
         return result
     }
 
@@ -57,23 +50,22 @@ export class pelicula{
             backdrop: req.backdrop,
             genres: req.genres
         }
-        const db = await connect()
         const result = await db.collection('PELICULAS').updateOne({_id:new ObjectId(sid)},{$set:upData})
-        await disconnect()
         return result
     }
 
     async deleteMovie(id){
-        const db = await connect()
-        const result = await db.collection('PELICULAS').deleteOne({_id:id})
-        await disconnect()
+        const result = await db.collection('PELICULAS').deleteOne({_id:new ObjectId(id)})
         return result
     }
 
     async getMoviesPop(req,res){
-        const db = await connect()
         const result = await db.collection('PELICULAS').find().sort({popularity:-1}).toArray()
-        await disconnect()
         return result
+    }
+
+    async search(id){
+        const result = await db.collection('PELICULAS').find({_id:new ObjectId(id)}).toArray();
+        return result;
     }
 }

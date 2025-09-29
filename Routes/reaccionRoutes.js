@@ -7,16 +7,16 @@ const reaccion = new reaccionController()
 const routerReaccion = Router()
 
 
-routerReaccion.post('./create', getCurrentUser ,async (req,res,next)=>{
+routerReaccion.post('/create', getCurrentUser ,async (req,res,next)=>{
     try {
-        const result = await reaccion.createReaccion(req)
+        const result = await reaccion.createReaccion(req.body)
         return res.status(200).json(result)
     } catch (error) {
         next(error)
     }
 })
 
-routerReaccion.get('./list', getCurrentUser ,async (req,res,next)=>{
+routerReaccion.get('/list', getCurrentUser ,async (req,res,next)=>{
     try {
         const result = await reaccion.listReacciones()
         return res.status(200).json(result)
@@ -25,9 +25,9 @@ routerReaccion.get('./list', getCurrentUser ,async (req,res,next)=>{
     }
 })
 
-routerReaccion.put('./edit/:id', getCurrentUser ,async (req,res,next)=>{
+routerReaccion.put('/edit/:id', getCurrentUser ,async (req,res,next)=>{
     try {
-        const result = await reaccion.updateReacciones(req.params.id,req)
+        const result = await reaccion.updateReacciones(req.params.id,req.body)
         return res.status(200).json(result)
     } catch (error) {
         next(error)

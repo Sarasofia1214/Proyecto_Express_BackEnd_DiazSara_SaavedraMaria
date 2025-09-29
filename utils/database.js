@@ -8,10 +8,10 @@ const namedb = process.env.DBName;
 let client;
 let db;
 
-export async function connect(){
+export async function initDb(){
   try {
-    if (db && client) return db;
-    client = new MongoClient(URI);
+    if (db) return db;
+    client = new MongoClient(URI, { maxPoolSize: 10, waitQueueTimeoutMS: 2000 });
     await client.connect();
     db = client.db(namedb);
     console.log("Conectado a la base de datos exitosamente ✅")
@@ -21,6 +21,8 @@ export async function connect(){
     throw err;
   }
 }
+
+export {db}
 
 export async function disconnect() {
   try {
