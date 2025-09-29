@@ -98,7 +98,11 @@ Finalmente, el **modelo físico** para la implementación de una base de datos e
 El plasmar estos datos tiene como objetivo para esta documentación la **representación visual** que define los sistemas de recopilación y administración de información del sistema de reseñas de películas, logrando ayudar a las diferentes partes interesadas, como analistas e ingenieros, para interpretar de manera efectiva los datos.
 
 ## Caso de Estudio
-# Caso de Estudio: KarenFlix
+# Caso de Estudio: Realfilms
+
+## Repositorio del FrontEnd:
+https://github.com/Sarasofia1214/Proyecto_Express_FrontEnd_DiazSara_SaavedraMaria.git
+
 
 ##  Objetivo
 
