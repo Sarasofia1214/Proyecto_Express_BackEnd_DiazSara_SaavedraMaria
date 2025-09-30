@@ -27,7 +27,7 @@ async function startServer() {
 
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 300,
+    max: 2000,
     standardHeaders: "draft-7",
     legacyHeaders: false,
     message: { ok: false, error: "Too many requests" },
@@ -42,7 +42,7 @@ async function startServer() {
         "http://localhost:3000",
         "http://0.0.0.0",
         "http://127.0.0.1:5500",
-        "http://localhost:5500"
+        "http://127.0.0.1:5501"
       ],
       methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
       allowedHeaders: ["Content-Type","Authorization"],
@@ -75,3 +75,5 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+
+

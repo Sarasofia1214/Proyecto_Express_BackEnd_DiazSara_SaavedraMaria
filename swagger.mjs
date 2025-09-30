@@ -8,7 +8,7 @@ const doc = {
     description: 'Documentación generada automáticamente con swagger-autogen',
     version: '1.0.0',
   },
-  servers: [{ url: 'http://62.169.28.169"' }],
+  servers: [{ url: 'http://62.169.28.169' }],
   components: {
     securitySchemes: {
       bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
