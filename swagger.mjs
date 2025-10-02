@@ -1,4 +1,3 @@
-// swagger.mjs  (ESM)
 import swaggerAutogen from 'swagger-autogen';
 
 const doc = {

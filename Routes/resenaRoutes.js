@@ -60,9 +60,10 @@ routerResena.delete("/delete/:id",getCurrentUser,async (req, res, next) => {
 routerResena.get("/getallresenacsv/:id", async (req,res,next)=>{
     try{
         const result= await resena.getResenaByMovieCsv(req.params.id)
-        return res.status(200).csv(result)
+        return res.status(200).json(result)
     }
     catch (error){
+        console.log('Erorr generando CSV:',error)
         next(error)
     }
 })
