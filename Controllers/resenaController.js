@@ -27,4 +27,8 @@ export class resenaController{
         const result = await resenaModel.delete(id)
         return result
     }
+    async getResenaByMovieCsv(id){
+        const result = await resenaModel.getByMovieCsv(id)
+        return result
+    }
 }

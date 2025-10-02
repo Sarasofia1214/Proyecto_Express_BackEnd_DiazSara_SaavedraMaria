@@ -46,4 +46,9 @@ export class resena{
         const result = await db.collection('RESENAS').deleteOne({_id:new ObjectId(id)})
         return result
     }
+
+    async getByMovieCsv(id_pelicula){
+        const result = await db.collection('RESENAS').find({id_pelicula: new ObjectId(id_pelicula)}).toArray
+        return result
+    }
 }

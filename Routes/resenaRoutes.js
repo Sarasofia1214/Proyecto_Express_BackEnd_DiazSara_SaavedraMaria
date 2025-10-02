@@ -57,6 +57,14 @@ routerResena.delete("/delete/:id",getCurrentUser,async (req, res, next) => {
     }
 })
 
-
+routerResena.get("/getallresenacsv/:id", async (req,res,next)=>{
+    try{
+        const result= await resena.getResenaByMovieCsv(req.params.id)
+        return res.status(200).csv(result)
+    }
+    catch (error){
+        next(error)
+    }
+})
 
 export default routerResena;
