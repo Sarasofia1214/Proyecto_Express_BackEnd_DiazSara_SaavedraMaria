@@ -1,0 +1,9 @@
+- [x] Modify utils/database.js to have persistent connection and export db
+- [x] Update app.js to call initDb() at startup and handle graceful shutdown
+- [x] Remove connect/disconnect from Models/peliculaModel.js
+- [x] Remove connect/disconnect from Models/resenaModel.js
+- [x] Remove connect/disconnect from Models/userModel.js
+- [x] Remove connect/disconnect from Models/reaccionModel.js
+- [x] Remove connect/disconnect from auth/jwt.js
+- [x] Update main.js to remove disconnect calls
+- [x] Test endpoints (server starts without connection errors)

@@ -1,7 +1,7 @@
 {
-  "name": "proyecto_express_backend_diazsara_saavedramaria",
+  "name": "proyecto_express_backend_guerrerodaniel_abriljuan",
   "version": "1.0.0",
-  "description": "<div align=\"center\"> <h1> RealFilms </h1> <br> <br><br> <br> <br> <br> <br> <br> <br> <br> <h1>MARIA JULIANA SAAVEDRA MEJIA</h1> <h1>SARA SOFÍA DÍAZ RODRÍGUEZ</h1> <h1>S1</h1> <h1>PEDRO FELIPE GÓMEZ BONILLA</h1> <br> <br> <br> <br> <br> <br> <br> <br> <br> <h2>CAMPUSLANDS</h2>",
+  "description": "",
   "type": "module",
   "main": "app.js",
   "scripts": {
@@ -12,19 +12,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sarasofia1214/Proyecto_Express_BackEnd_DiazSara_SaavedraMaria.git"
+    "url": "git+https://github.com/Danny200523/Proyecto_Express_BackEnd_GuerreroDaniel_AbrilJuan.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Sarasofia1214/Proyecto_Express_BackEnd_DiazSara_SaavedraMaria/issues"
+    "url": "https://github.com/Danny200523/Proyecto_Express_BackEnd_GuerreroDaniel_AbrilJuan/issues"
   },
-  "homepage": "https://github.com/Sarasofia1214/Proyecto_Express_BackEnd_DiazSara_SaavedraMaria#readme",
+  "homepage": "https://github.com/Danny200523/Proyecto_Express_BackEnd_GuerreroDaniel_AbrilJuan#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "express-validator": "^7.2.1",
@@ -33,6 +33,7 @@
     "nodemon": "^3.1.10",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
   }
 }
